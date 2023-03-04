@@ -9,6 +9,10 @@ public class Single extends Lanzamiento{
         super();
     }
 
+    public Single(String tituloPublicacion, String FecLanzamiento, int likes) {
+        super(tituloPublicacion, FecLanzamiento, likes);
+    }
+    
     public Single(Cancion cancion, String tituloPublicacion, String FecLanzamiento, int likes) {
         super(tituloPublicacion, FecLanzamiento, likes);
         this.cancion = cancion;

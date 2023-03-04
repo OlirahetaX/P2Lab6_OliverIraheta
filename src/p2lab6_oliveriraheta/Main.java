@@ -32,7 +32,9 @@ public class Main extends javax.swing.JFrame {
     public Main() throws IOException, Exception {
         initComponents();
         this.setLocationRelativeTo(null);
-        cargarArchivo();
+        cargarUsuarios();
+        cargarLanzamientos();
+        cargarCanciones();
     }
 
     /**
@@ -215,8 +217,8 @@ public class Main extends javax.swing.JFrame {
                 .addGap(58, 58, 58)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(126, 126, 126)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(145, Short.MAX_VALUE))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(122, Short.MAX_VALUE))
         );
         jd_ArtistaLayout.setVerticalGroup(
             jd_ArtistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -473,6 +475,16 @@ public class Main extends javax.swing.JFrame {
             lanzamientos.add(album);
         }
         llenarJTartista();
+        try {
+            escribirLanzamientos();
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            escribirCanciones();
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1MouseClicked
 
     /**
@@ -547,7 +559,7 @@ public class Main extends javax.swing.JFrame {
     public ArrayList<Lanzamiento> lanzamientos = new ArrayList();
     public String user = "";
 
-    public void cargarArchivo() throws FileNotFoundException, IOException, Exception {
+    public void cargarUsuarios() throws FileNotFoundException, IOException, Exception {
         File archivo = null;
         FileReader fr = null;
         BufferedReader br = null;
@@ -641,5 +653,116 @@ public class Main extends javax.swing.JFrame {
         }
         jt_ArtistaLanza.setModel(modelo);
     }
+
+    public void cargarLanzamientos() throws IOException {
+        File archivo = null;
+        FileReader fr = null;
+        BufferedReader br = null;
+
+        try {
+
+            archivo = new File("./Lanzamientos.txt");
+            if (archivo.exists()) {
+            }
+            fr = new FileReader(archivo);
+            br = new BufferedReader(fr);
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                String[] userToken = linea.split("\\|");
+                if (userToken[3].equals("Album")) {
+                    lanzamientos.add(new Album(userToken[0], userToken[1], Integer.parseInt(userToken[2])));
+                } else {
+                    lanzamientos.add(new Single(userToken[0], userToken[1], Integer.parseInt(userToken[2])));
+                }
+
+            }
+        } catch (FileNotFoundException e) {
+        }
+        br.close();
+        fr.close();
+    }
+
+    public void escribirLanzamientos() throws IOException {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+
+        try {
+            fw = new FileWriter("./Lanzamientos.txt", false);
+            bw = new BufferedWriter(fw);
+
+            for (int i = 0; i < lanzamientos.size(); i++) {
+
+                bw.write(lanzamientos.get(i).getTituloPublicacion()+ "|");
+                bw.write(lanzamientos.get(i).getFecLanzamiento()+ "|");
+                bw.write(lanzamientos.get(i).getLikes()+ "|");
+                if (lanzamientos.get(i) instanceof Album) {
+                    bw.write( "Album\n");
+                } else {
+                    bw.write("Single\n");
+                }
+
+            }
+            bw.flush();
+        } catch (IOException ex) {
+        }
+        bw.close();
+        fw.close();
+    }
+
+    public void cargarCanciones() throws IOException {
+        File archivo = null;
+        FileReader fr = null;
+        BufferedReader br = null;
+
+        try {
+
+            archivo = new File("./Canciones.txt");
+            if (archivo.exists()) {
+            }
+            fr = new FileReader(archivo);
+            br = new BufferedReader(fr);
+            String linea;
+
+            while ((linea = br.readLine()) != null) {
+                String[] userToken = linea.split("\\|");
+                for (Lanzamiento la : lanzamientos) {
+                    if (la.getTituloPublicacion().equals(userToken[2])) {
+                        if (la instanceof Album album) {
+                            album.getCanciones().add(new Cancion(userToken[0],userToken[1],userToken[2]));
+                        }
+                        else{
+                            ((Single)la).setCancion(new Cancion(userToken[0],userToken[1],userToken[2]));
+                        }
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+        }
+        br.close();
+        fr.close();
+    }
+    
+     public void escribirCanciones() throws IOException {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+
+        try {
+            fw = new FileWriter("./Canciones.txt", false);
+            bw = new BufferedWriter(fw);
+
+            for (int i = 0; i < canciones.size(); i++) {
+
+                bw.write(canciones.get(i).getTitulo()+ "|");
+                bw.write(canciones.get(i).getDuracion()+ "|");
+                bw.write(canciones.get(i).getAlbum()+"\n");
+            }
+            bw.flush();
+        } catch (IOException ex) {
+        }
+        bw.close();
+        fw.close();
+    }
+    
 
 }
