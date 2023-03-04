@@ -22,5 +22,10 @@ public class Album extends Lanzamiento{
     public void setCanciones(ArrayList<Cancion> canciones) {
         this.canciones = canciones;
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
     
 }

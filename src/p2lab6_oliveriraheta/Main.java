@@ -12,10 +12,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -53,6 +56,10 @@ public class Main extends javax.swing.JFrame {
         jToggleButton1 = new javax.swing.JToggleButton();
         jb_agregar = new javax.swing.JButton();
         tf_newUser = new javax.swing.JTextField();
+        jd_Artista = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jt_ArtistaLanza = new javax.swing.JTree();
+        jButton1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         tf_user = new javax.swing.JTextField();
@@ -185,6 +192,45 @@ public class Main extends javax.swing.JFrame {
                 .addContainerGap(146, Short.MAX_VALUE))
         );
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("Lanzamiento");
+        javax.swing.tree.DefaultMutableTreeNode treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Albumes");
+        treeNode1.add(treeNode2);
+        treeNode2 = new javax.swing.tree.DefaultMutableTreeNode("Singles");
+        treeNode1.add(treeNode2);
+        jt_ArtistaLanza.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        jScrollPane1.setViewportView(jt_ArtistaLanza);
+
+        jButton1.setText("Lanzamiento");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jd_ArtistaLayout = new javax.swing.GroupLayout(jd_Artista.getContentPane());
+        jd_Artista.getContentPane().setLayout(jd_ArtistaLayout);
+        jd_ArtistaLayout.setHorizontalGroup(
+            jd_ArtistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jd_ArtistaLayout.createSequentialGroup()
+                .addGap(58, 58, 58)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(126, 126, 126)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(145, Short.MAX_VALUE))
+        );
+        jd_ArtistaLayout.setVerticalGroup(
+            jd_ArtistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jd_ArtistaLayout.createSequentialGroup()
+                .addGroup(jd_ArtistaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jd_ArtistaLayout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 517, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jd_ArtistaLayout.createSequentialGroup()
+                        .addGap(102, 102, 102)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(35, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(0, 51, 255));
@@ -301,13 +347,25 @@ public class Main extends javax.swing.JFrame {
     private void jb_ingresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jb_ingresarMouseClicked
         // TODO add your handling code here:
         boolean existe = false;
+        int tipo = 0;
         for (Usuario u : usuarios) {
             if (u.getUser().equals(tf_user.getText()) && u.getPassword().equals(pf_password.getText())) {
                 existe = true;
+                if (u instanceof Artista) {
+                    tipo = 1;
+                }
             }
         }
         if (existe) {
-            System.out.println("aaaaaa");
+            user = tf_user.getText();
+            this.setVisible(false);
+            if (tipo == 1) {
+                jd_Artista.pack();
+                jd_Artista.setLocationRelativeTo(this);
+                llenarJTartista();
+                jd_Artista.setVisible(true);
+            }
+
         } else {
             JOptionPane.showMessageDialog(this, "NO EXISTE");
         }
@@ -357,17 +415,21 @@ public class Main extends javax.swing.JFrame {
             } else {
                 usuarios.add(new Cliente(tf_newUser.getText(), pf_newContra.getText(), Integer.parseInt(tf_newEdad.getText()), false));
             }
-            JOptionPane.showMessageDialog(jd_newusu, "AGREGADO");
-            for (Usuario usuario : usuarios) {
-                System.out.println(usuario.getUser());
-            }
-            jd_newusu.setVisible(false);
-            this.pack();
-            this.setLocationRelativeTo(null);
-            this.setVisible(true);
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(jd_newusu, e);
         }
+
+        JOptionPane.showMessageDialog(jd_newusu, "AGREGADO");
+        try {
+            escribirBitacora();
+        } catch (IOException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        jd_newusu.setVisible(false);
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
         jToggleButton1.setSelected(false);
         try {
             escribirArchivo();
@@ -380,6 +442,38 @@ public class Main extends javax.swing.JFrame {
         tf_newUser.setText("");
         // TODO add your handling code here:
     }//GEN-LAST:event_tf_newUserMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        // TODO add your handling code here:
+
+        int opc = Integer.parseInt(JOptionPane.showInputDialog("1. Album   2. Single"));
+        String continuar = "s";
+        String titulo = JOptionPane.showInputDialog(jd_Artista, "Titulo de la publicacion");
+        String fecha = JOptionPane.showInputDialog(jd_Artista, "Fecha de lanzamiento");
+
+        Album album = new Album(titulo, fecha, 0);
+
+        while (continuar.equals("s")) {
+            String tituloCan = JOptionPane.showInputDialog(jd_Artista, "Titulo de la Cancion");
+            String duracion = JOptionPane.showInputDialog(jd_Artista, "Duracion de la cancion");
+            Cancion cancion = new Cancion(tituloCan, duracion, titulo);
+            canciones.add(cancion);
+
+            if (opc == 2) {
+                canciones.add(cancion);
+                continuar = "n";
+                Single single = new Single(cancion, titulo, fecha, 0);
+                lanzamientos.add(single);
+            } else {
+                album.getCanciones().add(cancion);
+                continuar = JOptionPane.showInputDialog("Seguir agregando s/n");
+            }
+        }
+        if (opc == 1) {
+            lanzamientos.add(album);
+        }
+        llenarJTartista();
+    }//GEN-LAST:event_jButton1MouseClicked
 
     /**
      * @param args the command line arguments
@@ -423,6 +517,7 @@ public class Main extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -431,12 +526,15 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JButton jb_agregar;
     private javax.swing.JButton jb_ingresar;
     private javax.swing.JButton jb_new;
+    private javax.swing.JDialog jd_Artista;
     private javax.swing.JDialog jd_newusu;
     private javax.swing.JPanel jp_ar;
+    private javax.swing.JTree jt_ArtistaLanza;
     private javax.swing.JPasswordField pf_newContra;
     private javax.swing.JPasswordField pf_password;
     private javax.swing.JTextField tf_newEdad;
@@ -445,6 +543,9 @@ public class Main extends javax.swing.JFrame {
     private javax.swing.JTextField tf_user;
     // End of variables declaration//GEN-END:variables
     public ArrayList<Usuario> usuarios = new ArrayList();
+    public ArrayList<Cancion> canciones = new ArrayList();
+    public ArrayList<Lanzamiento> lanzamientos = new ArrayList();
+    public String user = "";
 
     public void cargarArchivo() throws FileNotFoundException, IOException, Exception {
         File archivo = null;
@@ -478,9 +579,11 @@ public class Main extends javax.swing.JFrame {
     public void escribirArchivo() throws IOException {
         FileWriter fw = null;
         BufferedWriter bw = null;
+
         try {
             fw = new FileWriter("./Usuarios.txt", false);
             bw = new BufferedWriter(fw);
+
             for (int i = 0; i < usuarios.size(); i++) {
 
                 bw.write(usuarios.get(i).getUser() + "|");
@@ -498,6 +601,45 @@ public class Main extends javax.swing.JFrame {
         }
         bw.close();
         fw.close();
+    }
+
+    public void escribirBitacora() throws IOException {
+        FileWriter fw = null;
+        BufferedWriter bw = null;
+
+        try {
+            fw = new FileWriter("./Bitacora.txt", false);
+            bw = new BufferedWriter(fw);
+
+            bw.write(new Date() + "|");
+            bw.write(tf_newUser.getText() + "|");
+            if (jToggleButton1.isSelected()) {
+                bw.write("Artista\n");
+            } else {
+                bw.write("Cliente\n");
+            }
+
+            bw.flush();
+        } catch (IOException ex) {
+        }
+        bw.close();
+        fw.close();
+
+    }
+
+    public void llenarJTartista() {
+        DefaultTreeModel modelo = (DefaultTreeModel) jt_ArtistaLanza.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) modelo.getRoot();
+        for (Lanzamiento lan : lanzamientos) {
+            if (lan instanceof Album) {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
+                child.add(new DefaultMutableTreeNode(lan));
+            } else {
+                DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(1);
+                child.add(new DefaultMutableTreeNode(lan));
+            }
+        }
+        jt_ArtistaLanza.setModel(modelo);
     }
 
 }

@@ -38,5 +38,10 @@ public class Lanzamiento {
     public void setLikes(int likes) {
         this.likes = likes;
     }
+
+    @Override
+    public String toString() {
+        return  tituloPublicacion ;
+    }
     
 }

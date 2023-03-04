@@ -3,10 +3,10 @@ package p2lab6_oliveriraheta;
 
 
 public class Cancion {
-    private String titulo,duracion;
-    private Album album;
+    private String titulo,duracion,album;
+    
 
-    public Cancion(String titulo, String duracion, Album album) {
+    public Cancion(String titulo, String duracion, String album) {
         this.titulo = titulo;
         this.duracion = duracion;
         this.album = album;
@@ -31,11 +31,11 @@ public class Cancion {
         this.duracion = duracion;
     }
 
-    public Album getAlbum() {
+    public String getAlbum() {
         return album;
     }
 
-    public void setAlbum(Album album) {
+    public void setAlbum(String album) {
         this.album = album;
     }
     

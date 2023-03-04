@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 
 public class Cliente extends Usuario{
-    private ArrayList cancionesFav = new ArrayList();
-    private ArrayList RepCreadas = new ArrayList();
-    private ArrayList cancionesLike = new ArrayList();
+    private ArrayList<Cancion> cancionesFav = new ArrayList();
+    private ArrayList<ListaDeCancion> RepCreadas = new ArrayList();
+    private ArrayList<ListaDeCancion> cancionesLike = new ArrayList();
 
     public Cliente() {
         super();

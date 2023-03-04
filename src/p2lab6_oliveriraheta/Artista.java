@@ -5,8 +5,8 @@ import java.util.ArrayList;
 public class Artista extends Usuario {
 
     private String nameAr;
-    private ArrayList canciones = new ArrayList();
-    private ArrayList albumes = new ArrayList();
+    private ArrayList<Cancion> canciones = new ArrayList();
+    private ArrayList<ListaDeCancion> albumes = new ArrayList();
 
     public Artista() {
         super();

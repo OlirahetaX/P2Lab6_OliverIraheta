@@ -22,5 +22,8 @@ public class Single extends Lanzamiento{
     public void setCancion(Cancion cancion) {
         this.cancion = cancion;
     }
-    
+     @Override
+    public String toString() {
+        return super.toString();
+    }
 }
